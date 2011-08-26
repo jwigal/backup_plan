@@ -11,3 +11,7 @@ group :development do
   gem "jeweler", "~> 1.6.4"
   gem "rcov", ">= 0"
 end
+
+gem "activesupport", "~>3.0"
+gem "rio"
+gem "configliere"

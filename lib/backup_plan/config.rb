@@ -32,6 +32,10 @@ module BackupPlan
     def self.mysql_credentials
       [config['mysql.backup.user'], config['mysql.backup.password']]
     end
+    
+    def self.mysql_binary_log_base
+      config['mysql.binary_log_base'] || "/var/log/mysql/mysql-bin"
+    end
 
     def self.s3_credentials
       [config['s3.access_key'], config['s3.secret_key']]
@@ -40,7 +44,7 @@ module BackupPlan
     private
 
     def self.config
-      Settings.read(:backup)
+      Settings.read("backup.yml")
     end
   end
 end

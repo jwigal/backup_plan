@@ -1,5 +1,5 @@
 module BackupPlan
-  class File
+  class FileSystem
     def self.create_password_file
       rio( Config.working_base + "/password.#{Config.filename_base}.txt" ) << Config.encryption_password
     end
@@ -11,7 +11,7 @@ module BackupPlan
 
     def self.encrypt_files
       rio(Config.working_base).each do |file|
-        unless file.filename =~ /^password/
+        unless file.filename =~ /^(password|\.DS_Store)/
           puts "encrypting #{file.path}"
           commands=[
             "cp #{file.path} #{Config.upload_base}/#{file.filename}",
