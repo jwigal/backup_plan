@@ -15,10 +15,10 @@ module BackupPlan
           puts "encrypting #{file.path}"
           commands=[
             "cp #{file.path} #{Config.upload_base}/#{file.filename}",
-            "openssl des3 -salt -k \"#{Config.encryption_password}\" -in #{Config.upload_base}/#{file.filename} " + 
-              " -out #{Config.upload_base}/#{file.filename}.des3",
-            "gzip #{Config.upload_base}/#{file.filename}.des3",
-            "rm #{Config.upload_base}/#{file.filename}"          
+            "gzip #{Config.upload_base}/#{file.filename}",
+            "openssl des3 -salt -k \"#{Config.encryption_password}\" -in #{Config.upload_base}/#{file.filename}.gz " + 
+              " -out #{Config.upload_base}/#{file.filename}.gz.des3",
+            "rm #{Config.upload_base}/#{file.filename}.gz"          
           ]
           commands.each {|c| puts c ; `#{c}`}
         end
@@ -38,10 +38,10 @@ module BackupPlan
       rio(Config.restore_base).each do |file|
         unless file.filename =~ /^password/
           commands = [
-            "gunzip #{file.path}",
-            "openssl des3 -d -salt -k \"#{password}\" -in #{file.path.gsub(/.gz/,'')} " + 
-              "-out #{file.path.gsub(/\.des3\.gz$/,'')}",
-            "rm #{file.path.gsub(/\.gz/,'')}"
+            "openssl des3 -d -salt -k \"#{password}\" -in #{file.path} " + 
+              "-out #{file.path.gsub(/\.des3$/,'')}",
+            "gunzip #{file.path.gsub(/\.des3$/,'')}",
+            "rm #{file.path}"
           ]
           commands.each {|c| puts c ; `#{c}`}
         end
