@@ -15,3 +15,4 @@ end
 gem "activesupport", "~>3.0"
 gem "rio"
 gem "configliere"
+gem "aws-s3"

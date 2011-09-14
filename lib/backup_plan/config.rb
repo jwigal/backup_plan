@@ -40,6 +40,10 @@ module BackupPlan
     def self.s3_credentials
       [config['s3.access_key'], config['s3.secret_key']]
     end
+    
+    def self.s3_bucket
+      config['s3.bucket']
+    end
 
     private
 
