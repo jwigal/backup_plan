@@ -18,20 +18,21 @@ module BackupPlan
     def self.encrypt_files
       puts "Working base is #{Config.working_base.inspect}"
       ENV["BACKUP_PLAN_PWD"] = Config.encryption_password
-      rio(::BackupPlan::Config.working_base + "/").files(/(sql|txt)$/).all do |file|
-        unless file.filename =~ /^(password|\.DS_Store)/ && file.size > 0
-          puts "encrypting #{file.path}"
-          commands=[
-            "cp #{file.path} #{Config.upload_base}/#{file.filename}",
-            "gzip #{Config.upload_base}/#{file.filename}",
-            "openssl des3 -salt -k $BACKUP_PLAN_PWD " + 
-              "-in #{Config.upload_base}/#{file.filename}.gz " + 
-              " -out #{Config.upload_base}/#{file.filename}.gz.des3",
-            "rm #{Config.upload_base}/#{file.filename}.gz",
-            "rm #{file.path}"
-          ]
-          commands.each {|c| puts "  #{c}" ; `#{c}`}
-        end
+      Dir.entries( BackupPlan::Config.working_base).reject{|x| x =~ /^\./}.each do |filename|
+        working_file = Config.working_base + "/#{filename}"
+        upload_file = Config.upload_base + "/#{filename}"
+
+        puts "encrypting #{filename}"
+        commands=[
+          "cp #{working_file} #{upload_file}",
+          "gzip #{upload_file}",
+          "openssl des3 -salt -k $BACKUP_PLAN_PWD " + 
+            "-in #{upload_file}.gz " + 
+            " -out #{upload_file}.gz.des3",
+          "rm #{upload_file}.gz",
+          "rm #{working_file}"
+        ]
+        commands.each {|c| puts "::#{c}" ; `#{c}`}
       end
     end
 

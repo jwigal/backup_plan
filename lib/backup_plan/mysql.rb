@@ -12,9 +12,9 @@ module BackupPlan
     end
     
     def self.credentials_string
-      # ENV['MYSQL_PWD'] = Config.mysql_credentials.last
+      ENV['BACKUP_PLAN_MYSQL_PWD'] = Config.mysql_credentials.last
       " -u #{Config.mysql_credentials.first}" + 
-        (Config.mysql_credentials.last ? " --password=#{Config.mysql_credentials.last} " : "")
+        (Config.mysql_credentials.last ? " --password=$BACKUP_PLAN_MYSQL_PWD " : "")
     end
     
     def self.flush_logs
