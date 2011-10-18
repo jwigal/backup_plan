@@ -5,8 +5,8 @@ module BackupPlan
       @crypt ||= Crypt.new( backup_base )
     end
 
-    def self.encryption_password
-      @password ||= ActiveSupport::SecureRandom.base64(64)
+    def self.encryption_password(regenerate=nil)
+      regenerate ? (@password ||= ActiveSupport::SecureRandom.base64(64)) : (@password = ActiveSupport::SecureRandom.base64(64))
     end
 
     def self.filename_base
@@ -43,6 +43,18 @@ module BackupPlan
     
     def self.s3_bucket
       config['s3.bucket']
+    end
+
+    def self.aws_key_path
+      config['aws.key_path']
+    end
+    
+    def self.aws_cert_path
+      config['aws.cert_path']
+    end
+
+    def self.aws_region
+      config['aws.region']
     end
 
     private

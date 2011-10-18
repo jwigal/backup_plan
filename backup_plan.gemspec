@@ -5,12 +5,12 @@
 
 Gem::Specification.new do |s|
   s.name = %q{backup_plan}
-  s.version = "0.0.0"
+  s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jeff Wigal"]
-  s.date = %q{2011-08-25}
-  s.description = %q{TODO: longer description of your gem}
+  s.date = %q{2011-10-18}
+  s.description = %q{Backup your MySQL databases, encrypt them, move 'em to S3}
   s.email = %q{jeff@wigaldesign.com}
   s.extra_rdoc_files = [
     "LICENSE.txt",
@@ -24,12 +24,16 @@ Gem::Specification.new do |s|
     "README.rdoc",
     "Rakefile",
     "VERSION",
+    "backup_plan.gemspec",
     "lib/backup_plan.rb",
+    "lib/backup_plan/base.rb",
     "lib/backup_plan/config.rb",
     "lib/backup_plan/crypt.rb",
-    "lib/backup_plan/file.rb",
+    "lib/backup_plan/file_system.rb",
     "lib/backup_plan/mysql.rb",
+    "lib/backup_plan/s3.rb",
     "lib/backup_plan/version.rb",
+    "lib/tasks/backup.rake",
     "test/helper.rb",
     "test/test_backup_plan.rb"
   ]
@@ -37,7 +41,7 @@ Gem::Specification.new do |s|
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.5.2}
-  s.summary = %q{TODO: one-line summary of your gem}
+  s.summary = %q{Backup your MySQL databases, encrypt them, move 'em to S3}
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
@@ -46,6 +50,8 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<activesupport>, ["~> 3.0"])
       s.add_runtime_dependency(%q<rio>, [">= 0"])
       s.add_runtime_dependency(%q<configliere>, [">= 0"])
+      s.add_runtime_dependency(%q<aws-s3>, [">= 0"])
+      s.add_runtime_dependency(%q<amazon-ec2>, [">= 0"])
       s.add_development_dependency(%q<shoulda>, [">= 0"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.6.4"])
@@ -54,6 +60,8 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<activesupport>, ["~> 3.0"])
       s.add_dependency(%q<rio>, [">= 0"])
       s.add_dependency(%q<configliere>, [">= 0"])
+      s.add_dependency(%q<aws-s3>, [">= 0"])
+      s.add_dependency(%q<amazon-ec2>, [">= 0"])
       s.add_dependency(%q<shoulda>, [">= 0"])
       s.add_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.6.4"])
@@ -63,6 +71,8 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<activesupport>, ["~> 3.0"])
     s.add_dependency(%q<rio>, [">= 0"])
     s.add_dependency(%q<configliere>, [">= 0"])
+    s.add_dependency(%q<aws-s3>, [">= 0"])
+    s.add_dependency(%q<amazon-ec2>, [">= 0"])
     s.add_dependency(%q<shoulda>, [">= 0"])
     s.add_dependency(%q<bundler>, ["~> 1.0.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.6.4"])

@@ -17,8 +17,8 @@ Jeweler::Tasks.new do |gem|
   gem.name = "backup_plan"
   gem.homepage = "http://github.com/jwigal/backup_plan"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{Backup your MySQL databases, encrypt them, move 'em to S3}
+  gem.description = %Q{Backup your MySQL databases, encrypt them, move 'em to S3}
   gem.email = "jeff@wigaldesign.com"
   gem.authors = ["Jeff Wigal"]
   # dependencies defined in Gemfile

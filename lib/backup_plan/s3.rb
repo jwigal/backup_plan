@@ -8,6 +8,24 @@ module BackupPlan
         file.rm if ::AWS::S3::S3Object.store(file.filename.to_s, open(file.path), Config.s3_bucket )
       end
     end
+
+    def self.bucket
+      establish_connection
+      ::AWS::S3::Bucket.find(Config.s3_bucket)
+    end
+
+    def self.cleanup(days=30)
+      establish_connection
+      retval = []
+      bucket.objects.each do |obj|
+        object_date = DateTime.strptime(obj.last_modified.to_s, '%a %b %d %H:%M:%S %Z %Y')
+        if (DateTime.now - object_date).to_i > 30 && object_date.day > 1 
+          obj.delete
+          retval << obj
+          puts 'Deleted: ' + obj.inspect
+        end 
+      end      
+    end
         
     private
     
