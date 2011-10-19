@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{backup_plan}
-  s.version = "0.2.0"
+  s.version = "0.2.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jeff Wigal"]
@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
     "VERSION",
     "backup_plan.gemspec",
     "lib/backup_plan.rb",
+    "lib/backup_plan/aws.rb",
     "lib/backup_plan/base.rb",
     "lib/backup_plan/config.rb",
     "lib/backup_plan/crypt.rb",

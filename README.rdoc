@@ -1,7 +1,57 @@
 = backup_plan
 
-Description goes here.
+Backup your MySQL databases, encrypt them, move 'em to S3. A work in progress.
 
+== Configuration
+
+    
+    s=Settings.read "backup.yml"
+    s['base_folder'] = "/the/spot/where/backups/are/held
+    s['mysql.backup.user'] = "backup"
+    s['mysql.backup.password'] = "supersecret"
+    s['mysql.binary_log_base'] = "/mysql/binlog/location"
+    s['s3.access_key'] = "my-access-key-to-amazon-s3" 
+    s['s3.secret_key'] = "my-secret-key-to-amazon-s3"
+    s['s3.bucket'] = "backup-bucket-name"
+    s.save! "backup.yml"
+    
+    require "backup_plan"
+
+    BackupPlan::FileSystem.create_directories
+    BackupPlan::Crypt.generate_keys( BackupPlan::Config.working_base )
+  
+== MySQL Privileges Required
+
+    grant select, show databases, replication client, reload, super, lock tables on *.* to 'backup'@'localhost';
+
+
+== Usage
+  
+    require "backup_plan"
+    
+    BackupPlan::MySQL.backup_databases
+    BackupPlan::MySQL.backup_server
+    BackupPlan::FileSystem.gzip_files
+    BackupPlan::S3.upload_files
+    BackupPlan::S3.cleanup
+  
+    # or
+    
+    BackupPlan::FileSystem.create_encrypted_password_file
+    BackupPlan::MySQL.backup_databases
+    BackupPlan::MySQL.backup_server
+    BackupPlan::FileSystem.encrypt_files    
+    BackupPlan::S3.upload_files
+    BackupPlan::S3.cleanup
+
+    # or
+    
+    BackupPlan::MySQL.flush_logs
+    BackupPlan::MySQL.get_binary_logs
+    BackupPlan::FileSystem.gzip_files
+    BackupPlan::S3.upload_files
+    BackupPlan::S3.cleanup
+    
 == Contributing to backup_plan
  
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet

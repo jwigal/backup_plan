@@ -1,9 +1,14 @@
 module BackupPlan
   class FileSystem
     def self.create_directories
-      [BackupPlan::Config.working_base, BackupPlan::Config.upload_base, BackupPlan::Config.restore_base].each do |path|
+      [BackupPlan::Config.working_base, BackupPlan::Config.key_path, 
+        BackupPlan::Config.upload_base, BackupPlan::Config.restore_base].each do |path|
         `mkdir -p #{path}`
       end
+    end
+    
+    def self.gzip_files
+      Dir.entries( BackupPlan::Config.working_base).reject{|x| x =~ /^\./}.each {|filename|  `gzip #{Config.working_base}/#{filename} && mv #{Config.working_base}/#{filename}.gz #{Config.upload_base}`}
     end
 
     def self.create_password_file

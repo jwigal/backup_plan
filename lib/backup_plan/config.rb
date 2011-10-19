@@ -21,6 +21,10 @@ module BackupPlan
       backup_base + "working"
     end
 
+    def self.key_path
+      backup_base + "rsa"
+    end
+
     def self.upload_base
       backup_base + "upload"
     end
