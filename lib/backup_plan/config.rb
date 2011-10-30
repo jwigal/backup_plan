@@ -10,7 +10,7 @@ module BackupPlan
     end
 
     def self.filename_base
-      @filename_base ||= Time.now.strftime("%Y-%m-%d-%I-%M-%S")
+      @filename_base ||= Time.now.strftime("%Y-%m-%d-%H-%M-%S")
     end
 
     def self.backup_base

@@ -37,7 +37,7 @@ module BackupPlan
           "rm #{upload_file}.gz",
           "rm #{working_file}"
         ]
-        commands.each {|c| puts "::#{c}" ; `#{c}`}
+        commands.each {|c| puts ":: #{c}" ; `#{c}`}
       end
     end
 
