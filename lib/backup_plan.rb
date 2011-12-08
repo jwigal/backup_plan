@@ -3,6 +3,7 @@ end
 
 require 'openssl'
 require 'base64'
+require 'securerandom'
 require "rio"
 require 'aws/s3'
 require "active_support/secure_random"

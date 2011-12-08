@@ -6,7 +6,7 @@ module BackupPlan
     end
 
     def self.encryption_password(regenerate=nil)
-      regenerate ? (@password ||= ActiveSupport::SecureRandom.base64(64)) : (@password = ActiveSupport::SecureRandom.base64(64))
+      regenerate ? (@password ||= SecureRandom.base64(64)) : (@password = SecureRandom.base64(64))
     end
 
     def self.filename_base
