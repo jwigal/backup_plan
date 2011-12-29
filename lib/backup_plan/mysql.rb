@@ -22,10 +22,8 @@ module BackupPlan
     end
     
     def self.get_binary_logs
-      newest = `ls -d1 #{BackupPlan::Config.mysql_binary_log_base}.??????  | sort -g `.split("\n").reject{|f| %w(. ..).include?(f)}.last
       commands = ["sudo cp #{Config.mysql_binary_log_base}.* #{Config.working_base}",
       "sudo chown #{ENV["LOGNAME"]} #{Config.working_base}/*",
-      "rm #{Config.working_base}/#{newest}",
       "tar -cf #{Config.working_base}/mysql.tlog.#{Config.filename_base}.tar #{Config.working_base}/*",
       "gzip #{Config.working_base}/mysql.tlog.#{Config.filename_base}.tar",
       "mv #{Config.working_base}/mysql.tlog.#{Config.filename_base}.tar.gz #{Config.upload_base}",
