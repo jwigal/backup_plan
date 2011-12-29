@@ -6,7 +6,6 @@ require 'base64'
 require 'securerandom'
 require "rio"
 require 'aws/s3'
-require "active_support/secure_random"
 require "configliere"
 require "backup_plan/config"
 require "backup_plan/crypt"
