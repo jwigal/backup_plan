@@ -1,15 +1,17 @@
 module BackupPlan
   class MySQL < Base
     def self.backup_databases
-      databases.each do |database|
-        opts = {
-          :creds => credentials_string,
-          :filename => [Config.working_base+"/mysql",database,Config.filename_base,"sql"].join(".") } 
-        run "touch", opts[:filename]
-        run "mysqldump","#{opts[:creds]} #{database} > #{opts[:filename]}"
-      end
+      databases.each {|d| backup_database d}
     end
     
+    def self.backup_database(name)
+      opts = {
+        :creds => credentials_string,
+        :filename => [Config.working_base+"/mysql",name,Config.filename_base,"sql"].join(".") } 
+      run "touch", opts[:filename]
+      run "mysqldump","#{opts[:creds]} #{name} > #{opts[:filename]}"
+      
+    end
     def self.databases
       run("mysql"," -e 'show databases' #{credentials_string} -s --skip-column-names").split("\n").reject{|x| x == "information_schema"}
     end

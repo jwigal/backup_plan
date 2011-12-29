@@ -24,7 +24,6 @@ module BackupPlan
     end
 
     def self.encrypt_files
-      Process.setrlimit(Process::RLIMIT_NOFILE, 4096, 65536)
       log "Working base is #{Config.working_base.inspect}"
       ENV["BACKUP_PLAN_PWD"] = Config.encryption_password
       Dir.entries( BackupPlan::Config.working_base).reject{|x| x =~ /^\./}.each do |filename|
