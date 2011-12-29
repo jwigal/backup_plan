@@ -28,7 +28,8 @@ module BackupPlan
       "rm #{Config.working_base}/#{newest}",
       "tar -cf #{Config.working_base}/mysql.tlog.#{Config.filename_base}.tar #{Config.working_base}/*",
       "gzip #{Config.working_base}/mysql.tlog.#{Config.filename_base}.tar",
-      "mv #{Config.working_base}/mysql.tlog.#{Config.filename_base}.tar.gz #{Config.upload_base}"
+      "mv #{Config.working_base}/mysql.tlog.#{Config.filename_base}.tar.gz #{Config.upload_base}",
+      "rm #{Config.working_base}/*"
       ]     
       commands.each {|c| puts ":: #{c}" ; `#{c}`} 
     end
