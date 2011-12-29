@@ -1,6 +1,6 @@
 module BackupPlan
   # borrowed from dscape (https://github.com/dscape/rudolph)
-  class Crypt
+  class Crypt < Base
     def initialize( data_path)
       @data_path = data_path
       @private   = get_key 'id_rsa'

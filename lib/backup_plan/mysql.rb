@@ -1,14 +1,23 @@
 module BackupPlan
-  class MySQL
+  class MySQL < Base
     def self.backup_databases
-      `for I in $(mysql -e 'show databases' #{credentials_string} -s --skip-column-names); do touch #{Config.working_base}/mysql.$I.#{Config.filename_base}.sql && mysqldump #{credentials_string} $I > "#{Config.working_base}/mysql.$I.#{Config.filename_base}.sql"; done`
+      databases.each do |database|
+        opts = {
+          :creds => credentials_string,
+          :filename => [Config.working_base+"/mysql",database,Config.filename_base,"sql"].join(".") } 
+        run "touch", opts[:filename]
+        run "mysqldump","#{opts[:creds]} #{database} > #{opts[:filename]}"
+      end
+    end
+    
+    def self.databases
+      run("mysql"," -e 'show databases' #{credentials_string} -s --skip-column-names").split("\n").reject{|x| x == "information_schema"}
     end
     
     def self.backup_server
-      `touch #{Config.working_base}/mysql.all.#{Config.filename_base}.sql`
-      c = "mysqldump #{credentials_string} --all-databases --flush-logs --single-transaction > #{Config.working_base}/mysql.all.#{Config.filename_base}.sql"
-      puts c
-      `#{c}`
+      filename = "#{Config.working_base}/mysql.all.#{Config.filename_base}.sql"
+      run "touch #{filename}"
+      run "mysqldump #{credentials_string} --all-databases --flush-logs --single-transaction > #{filename}"
     end
     
     def self.credentials_string
@@ -18,18 +27,16 @@ module BackupPlan
     end
     
     def self.flush_logs
-      `mysqladmin #{credentials_string} flush-logs`
+      run("mysqladmin #{credentials_string} flush-logs")
     end
     
     def self.get_binary_logs
-      commands = ["sudo cp #{Config.mysql_binary_log_base}.* #{Config.working_base}",
-      "sudo chown #{ENV["LOGNAME"]} #{Config.working_base}/*",
-      "tar -cf #{Config.working_base}/mysql.tlog.#{Config.filename_base}.tar #{Config.working_base}/*",
-      "gzip #{Config.working_base}/mysql.tlog.#{Config.filename_base}.tar",
-      "mv #{Config.working_base}/mysql.tlog.#{Config.filename_base}.tar.gz #{Config.upload_base}",
-      "rm #{Config.working_base}/*"
-      ]     
-      commands.each {|c| puts ":: #{c}" ; `#{c}`} 
+      tarfile = "#{Config.working_base}/mysql.tlog.#{Config.filename_base}.tar"   
+      run "cp #{Config.mysql_binary_log_base}.* #{Config.working_base}"
+      run "tar -cf #{tarfile} #{Config.working_base}/*"
+      run "gzip #{tarfile}"
+      run "mv #{tarfile}.gz #{Config.upload_base}"
+      run "rm #{Config.working_base}/*"
     end
     
     

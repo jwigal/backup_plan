@@ -8,6 +8,7 @@ GEM
       mime-types
       xml-simple
     builder (3.0.0)
+    cocaine (0.2.0)
     configliere (0.4.7)
       json
     git (1.2.5)
@@ -30,6 +31,7 @@ DEPENDENCIES
   amazon-ec2
   aws-s3
   bundler (~> 1.0.0)
+  cocaine
   configliere
   jeweler (~> 1.6.4)
   rcov

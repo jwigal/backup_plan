@@ -1,19 +1,19 @@
 module BackupPlan
-  class AWS
+  class AWS  < Base
     def self.instance_id
-      `curl -s http://169.254.169.254/latest/meta-data/instance-id`.gsub(/[\n\r]/,'')
+      run("curl -s http://169.254.169.254/latest/meta-data/instance-id")
     end
     
     def self.file_system_mountpoint
-      `$(cat /etc/fstab | grep xfs | awk '{ print $1}')`.gsub(/[\n\r]/,'')
+      run("$(cat /etc/fstab | grep xfs | awk '{ print $1}')")
     end
 
     def self.virtual_mountpoint
-      `$(cat /etc/fstab | grep xfs | awk '{ print $2}')`.gsub(/[\n\r]/,'')
+      run("$(cat /etc/fstab | grep xfs | awk '{ print $2}')")
     end
     
     def self.volume_id
-      `$(ec2-describe-volumes -C #{Config.aws_cert_path} -K #{Config.aws_key_path} | grep "#{instance_id}" | grep "#{file_system_mountpoint}" | awk '{print $2}')`.gsub(/[\n\r]/,'')
+      run("$(ec2-describe-volumes -C #{Config.aws_cert_path} -K #{Config.aws_key_path} | grep \"#{instance_id}\" | grep \"#{file_system_mountpoint}\" | awk '{print $2}')")
     end
     
     def self.backup_name
@@ -21,11 +21,11 @@ module BackupPlan
     end
     
     def self.snapshot_description
-      @description ||= `#{backup_name} $(date +'%Y-%m-%d %H-%M-%S')`.gsub(/[\n\r]/,'')
+      @description ||= run("#{backup_name} $(date +'%Y-%m-%d %H-%M-%S')")
     end
     
     def self.volumes
-      `ec2-describe-volumes -C $EC2_CERT -K $EC2_PRIVATE_KEY | grep ${MY_INSTANCE_ID} | awk '{ print $2 }'`.split(/[^a-z0-9-]+/)
+      run("ec2-describe-volumes -C $EC2_CERT -K $EC2_PRIVATE_KEY | grep ${MY_INSTANCE_ID} | awk '{ print $2 }'").split(/[^a-z0-9-]+/)
     end
     
     
@@ -57,7 +57,7 @@ module BackupPlan
     end
     
     def self.cleanup_snapshots(keep=5)
-      volumes.each {|v|  `#{cleanup_snapshots_command(v, keep)}`}
+      volumes.each {|v|  run("#{cleanup_snapshots_command(v, keep)}")}
     end
     
     def self.mysql_consistent_snapshot
@@ -69,7 +69,7 @@ module BackupPlan
       echo "XFS Volume: #{volume_id}"
       echo "Snapshot: #{snapshot_description}"
       echo "Volume List: #{volumes.join(", ")}"
-      `#{consistent_snapshot_command}`
+      run("#{consistent_snapshot_command}")
     end
   end
 end

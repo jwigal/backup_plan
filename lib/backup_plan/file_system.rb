@@ -1,14 +1,17 @@
 module BackupPlan
-  class FileSystem
+  class FileSystem < Base
     def self.create_directories
       [BackupPlan::Config.working_base, BackupPlan::Config.key_path, 
         BackupPlan::Config.upload_base, BackupPlan::Config.restore_base].each do |path|
-        `mkdir -p #{path}`
+        run("mkdir", "-p :path", :path => path)
       end
     end
     
     def self.gzip_files
-      Dir.entries( BackupPlan::Config.working_base).reject{|x| x =~ /^\./}.each {|filename|  `gzip #{Config.working_base}/#{filename} && mv #{Config.working_base}/#{filename}.gz #{Config.upload_base}`}
+      Dir.entries( BackupPlan::Config.working_base).reject{|x| x =~ /^\./}.each do |filename|  
+        run("gzip #{Config.working_base}/#{filename}")
+        run("mv #{Config.working_base}/#{filename}.gz #{Config.upload_base}")
+      end
     end
 
     def self.create_password_file
@@ -21,23 +24,19 @@ module BackupPlan
     end
 
     def self.encrypt_files
-      puts "Working base is #{Config.working_base.inspect}"
+      Process.setrlimit(Process::RLIMIT_NOFILE, 4096, 65536)
+      log "Working base is #{Config.working_base.inspect}"
       ENV["BACKUP_PLAN_PWD"] = Config.encryption_password
       Dir.entries( BackupPlan::Config.working_base).reject{|x| x =~ /^\./}.each do |filename|
         working_file = Config.working_base + "/#{filename}"
         upload_file = Config.upload_base + "/#{filename}"
 
-        puts "encrypting #{filename}"
-        commands=[
-          "cp #{working_file} #{upload_file}",
-          "gzip #{upload_file}",
-          "openssl des3 -salt -k $BACKUP_PLAN_PWD " + 
-            "-in #{upload_file}.gz " + 
-            " -out #{upload_file}.gz.des3",
-          "rm #{upload_file}.gz",
-          "rm #{working_file}"
-        ]
-        commands.each {|c| puts ":: #{c}" ; `#{c}`}
+        log "encrypting #{filename}"      
+        run "cp #{working_file} #{upload_file}"
+        run "gzip #{upload_file}"
+        run "openssl des3 -salt -k $BACKUP_PLAN_PWD -in #{upload_file}.gz -out #{upload_file}.gz.des3"
+        run "rm #{upload_file}.gz"
+        run "rm #{working_file}"
       end
     end
 
@@ -51,16 +50,12 @@ module BackupPlan
         end
       end
       ENV["BACKUP_PLAN_PWD"] = password
-
       rio(Config.restore_base).each do |file|
         unless file.filename =~ /^password/
-          commands = [
-            "openssl des3 -d -salt -k $BACKUP_PLAN_PWD -in #{file.path} " + 
-              "-out #{file.path.gsub(/\.des3$/,'')}",
-            "gunzip #{file.path.gsub(/\.des3$/,'')}",
-            "rm #{file.path}"
-          ]
-          commands.each {|c| puts c ; `#{c}`}
+          run "openssl des3 -d -salt -k $BACKUP_PLAN_PWD -in #{file.path} " + 
+            "-out #{file.path.gsub(/\.des3$/,'')}"
+          run "gunzip #{file.path.gsub(/\.des3$/,'')}"
+          run "rm #{file.path}"
         end
       end
     end

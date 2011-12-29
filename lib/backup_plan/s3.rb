@@ -1,10 +1,10 @@
 module BackupPlan
-  class S3
+  class S3 < Base
     def self.upload_files
       establish_connection
       ::AWS::S3::Bucket.create Config.s3_bucket
       rio(Config.upload_base).files(/^[^.]/).each do |file|
-        puts "Moving #{file.filename} to S3"
+        log "Moving #{file.filename} to S3"
         file.rm if ::AWS::S3::S3Object.store(file.filename.to_s, open(file.path), Config.s3_bucket )
       end
     end
@@ -22,7 +22,7 @@ module BackupPlan
         if (DateTime.now - object_date).to_i > 30 && object_date.day > 1 
           obj.delete
           retval << obj
-          puts 'Deleted: ' + obj.inspect
+          log 'Deleted: ' + obj.inspect
         end 
       end      
     end

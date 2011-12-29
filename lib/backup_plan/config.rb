@@ -1,5 +1,5 @@
 module BackupPlan
-  class Config
+  class Config < Base
 
     def self.crypt
       @crypt ||= Crypt.new( backup_base )

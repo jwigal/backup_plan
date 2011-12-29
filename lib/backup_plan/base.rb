@@ -1,21 +1,18 @@
 module BackupPlan
   class Base
-    # This method will create and encrypt a password file, backup databases individually, backup the server
-    # as one sql dump, and encrypt the backup files
-    def self.backup_all
-      FileSystem.create_encrypted_password_file
-      MySQL.backup_databases
-      MySQL.backup_server
-      FileSystem.encrypt_files
+    # wrapper for running command line options
+    def self.run(binary, params = "", options = {})
+      command = Cocaine::CommandLine.new(binary, params, options)
+      log command.command
+      command.run.gsub(/[\n\r]$/,'')
     end
     
-    # This method will create and encrypt a password file, flush the logs, get the MySQL binary logs, and encrypt
-    # the backup files.
-    def self.backup_transaction_logs
-      FileSystem.create_encrypted_password_file
-      MySQL.flush_logs
-      MySQL.get_binary_logs      
-      FileSystem.encrypt_files
+    def self.log(command)
+      logger.info command
+    end
+    
+    def self.logger
+      ::Logger.new(File.join(Config.backup_base,"backup_plan.log"))      
     end
   end
 end
