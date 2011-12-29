@@ -22,14 +22,14 @@ module BackupPlan
     end
     
     def self.get_binary_logs
-      newest = `sudo ls -d #{Config.mysql_binary_log_base}.?????? | sed 's/^.*\.//' | sort -g | tail -n 1`
+      newest = `sudo ls -d1 #{Config.mysql_binary_log_base}.?????? | sed 's/^.*\.//' | sort -g | tail -n 1`
       commands = ["sudo cp #{Config.mysql_binary_log_base}.* #{Config.working_base}",
       "sudo chown #{ENV["LOGNAME"]} #{Config.working_base}/*",
       "rm #{Config.working_base}/#{newest}",
       "tar -cf #{Config.working_base}/mysql.tlog.#{Config.filename_base}.tar #{Config.working_base}/*",
       "gzip #{Config.working_base}/mysql.tlog.#{Config.filename_base}.tar",
-      "mv #{Config.working_base}/mysql.tlog.#{Config.filename_base}.tar.gz #{Config.upload_base}",
-      "rm #{Config.working_base}/*"]     
+      "mv #{Config.working_base}/mysql.tlog.#{Config.filename_base}.tar.gz #{Config.upload_base}"
+      ]     
       commands.each {|c| puts ":: #{c}" ; `#{c}`} 
     end
     

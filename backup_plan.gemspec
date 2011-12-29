@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{backup_plan}
-  s.version = "0.2.3"
+  s.version = "0.2.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jeff Wigal"]
-  s.date = %q{2011-10-18}
+  s.date = %q{2011-12-28}
   s.description = %q{Backup your MySQL databases, encrypt them, move 'em to S3}
   s.email = %q{jeff@wigaldesign.com}
   s.extra_rdoc_files = [
